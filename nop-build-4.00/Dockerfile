@@ -10,7 +10,7 @@ ENV DOTNET_SDK_VERSION=2.1.4 \
 # .NETCore 2.0
 # Install .NET Core SDK
 RUN Invoke-WebRequest "https://dotnetcli.blob.core.windows.net/dotnet/Sdk/${env:DOTNET_SDK_VERSION}/dotnet-sdk-${env:DOTNET_SDK_VERSION}-win-x64.zip" -OutFile dotnet.zip; \
-    Expand-Archive dotnet.zip -DestinationPath $Env:ProgramFiles\dotnet; \
+    Expand-Archive dotnet.zip -DestinationPath "$Env:ProgramFiles\dotnet"; \
     Remove-Item -Force dotnet.zip \
     SETX /M PATH $($Env:PATH + ';' + $Env:ProgramFiles + '\dotnet') \
     $env:MSBuildSDKsPath = 'C:\Program Files\dotnet\sdk\' + ${env:DOTNET_SDK_VERSION} + '\Sdks'; \
