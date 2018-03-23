@@ -4,7 +4,7 @@ MAINTAINER dealdiane@netpotential.co.nz
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
-ENV DOTNET_SDK_VERSION=2.1.4 \
+ENV DOTNET_SDK_VERSION=2.1.102 \
     DOTNET_SDK_DOWNLOAD_URL=https://dotnetcli.blob.core.windows.net/dotnet/Sdk/$DOTNET_SDK_VERSION/dotnet-sdk-$DOTNET_SDK_VERSION-win-x64.zip \
     NOP_VERSION=4.00
 
