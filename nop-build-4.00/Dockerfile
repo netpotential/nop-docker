@@ -10,9 +10,13 @@ ENV DOTNET_SDK_VERSION=2.1.102 \
 
 # .NETCore 2.0
 # Install .NET Core SDK
-RUN $env:MSBuildSDKsPath = 'C:\Program Files\dotnet\sdk\' + ${env:DOTNET_SDK_VERSION} + '\Sdks'; \
+RUN Invoke-WebRequest $Env:DOTNET_SDK_DOWNLOAD_URL -OutFile dotnet.zip; \
+    Expand-Archive dotnet.zip -DestinationPath $Env:ProgramFiles\dotnet; \
+    Remove-Item -Force dotnet.zip \
+    SETX /M PATH $($Env:PATH + ';' + $Env:ProgramFiles + '\dotnet') \
+    $env:MSBuildSDKsPath = 'C:\Program Files\dotnet\sdk\' + ${env:DOTNET_SDK_VERSION} + '\Sdks'; \
     [Environment]::SetEnvironmentVariable('MSBuildSDKsPath', $env:MSBuildSDKsPath, [EnvironmentVariableTarget]::Machine);
-    
+
 # Trigger the population of the local package cache
 ENV NUGET_XMLDOC_MODE skip
 RUN New-Item -Type Directory warmup; \
