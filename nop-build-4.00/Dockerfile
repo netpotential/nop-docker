@@ -7,20 +7,23 @@ SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPref
 ENV DOTNET_SDK_VERSION=2.1.4 \
     NOP_VERSION=4.00
 
-# .NETCore 2.0
 # Install .NET Core SDK
-RUN Invoke-WebRequest "https://dotnetcli.blob.core.windows.net/dotnet/Sdk/${env:DOTNET_SDK_VERSION}/dotnet-sdk-${env:DOTNET_SDK_VERSION}-win-x64.zip" -OutFile dotnet.zip; \
-    Expand-Archive dotnet.zip -DestinationPath "$Env:ProgramFiles\dotnet"; \
-    Remove-Item -Force dotnet.zip \
-    SETX /M PATH $($Env:PATH + ';' + $Env:ProgramFiles + '\dotnet') \
+# Uncomment below if .NET Core SDK is not installed or if you want to install a different version
+#RUN Invoke-WebRequest "https://dotnetcli.blob.core.windows.net/dotnet/Sdk/${env:DOTNET_SDK_VERSION}/dotnet-sdk-${env:DOTNET_SDK_VERSION}-win-x64.zip" -OutFile dotnet.zip; \
+#    Expand-Archive dotnet.zip -DestinationPath "$Env:ProgramFiles\dotnet"; \
+#    Remove-Item -Force dotnet.zip \
+
+# Combine this with above RUN command if installing .NET Core SDK
+RUN setx /M PATH $(${Env:PATH} + \";${Env:ProgramFiles}\dotnet\"); \
     $env:MSBuildSDKsPath = 'C:\Program Files\dotnet\sdk\' + ${env:DOTNET_SDK_VERSION} + '\Sdks'; \
     [Environment]::SetEnvironmentVariable('MSBuildSDKsPath', $env:MSBuildSDKsPath, [EnvironmentVariableTarget]::Machine);
 
 # Trigger the population of the local package cache
+# https://github.com/aspnet/aspnet-docker/blob/master/2.1/nanoserver-sac2016/amd64/sdk/Dockerfile
 ENV NUGET_XMLDOC_MODE skip
-RUN New-Item -Type Directory warmup; \
-    cd warmup; \
-    dotnet new; \
+RUN New-Item -Force -Type Directory $env:TEMP\warmup; \
+    cd $env:TEMP\warmup; \
+    dotnet new console; \
     cd ..; \
     Remove-Item -Force -Recurse warmup
 
