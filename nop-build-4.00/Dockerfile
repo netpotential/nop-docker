@@ -40,7 +40,7 @@ RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tl
 # Build nopCommerce
 # Switch to cmd prompt instead of powershell because passing build options with spaces (e.g. Any Cpu) fails in powershell
 SHELL ["cmd", "/c"]
-RUN msbuild /p:Configuration=Release /p:Platform="Any CPU" /p:Optimize=true /t:Restore,Build "C:/nop/Presentation/Nop.Web/Nop.Web.csproj"
+RUN msbuild /p:Configuration=Release /p:Platform="Any CPU" /p:Optimize=true /t:Restore,Build "C:/nop/nopCommerce.sln"
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
