@@ -4,7 +4,6 @@ MAINTAINER dealdiane@netpotential.co.nz
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
-ENV DOTNET_SDK_VERSION=2.1.4 \
     NOP_VERSION=4.00
 
 # Install .NET Core SDK
@@ -32,7 +31,7 @@ RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tl
     Invoke-WebRequest -OutFile C:\7zsetup.exe https://www.7-zip.org/a/7z1801-x64.exe; \
     Start-Process C:\7zsetup.exe -ArgumentList '/S /D=c:\7zip\' -Wait; \
     Invoke-WebRequest "https://github.com/nopSolutions/nopCommerce/releases/download/release-${env:NOP_VERSION}/nopCommerce_${env:NOP_VERSION}_Source.rar" -UseBasicParsing -OutFile "C:/nop-src.rar"; \
-    Start-Process C:\7zip\7z.exe -ArgumentList 'x C:/nop-src.rar -oC:/nop' -Wait; \
+    Start-Process C:\7zip\7z.exe -ArgumentList 'x C:/nop-src.rar -oC:/nop -x!*\Plugins\' -Wait; \
     Remove-Item -Force "C:\7zsetup.exe"; \
     Remove-Item -Force "C:\nop-src.rar"; \
     Remove-Item -Force -Recurse "C:\7zip";
