@@ -4,6 +4,7 @@ MAINTAINER dealdiane@netpotential.co.nz
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
+ENV DOTNET_SDK_VERSION=2.1.4 \
     NOP_VERSION=4.00
 
 # Install .NET Core SDK
