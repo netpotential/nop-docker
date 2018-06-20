@@ -2,7 +2,7 @@ FROM netpotential/msbuild:15.6
 
 MAINTAINER dealdiane@netpotential.co.nz
     
-RUN Invoke-WebRequest -OutFile C:\7zsetup.exe http://www.7-zip.org/a/7z1514-x64.exe; \
+RUN Invoke-WebRequest -OutFile C:\7zsetup.exe https://www.7-zip.org/a/7z1801-x64.exe; \
     Start-Process C:\7zsetup.exe -ArgumentList '/S /D=c:/7zip' -Wait; \
     Remove-Item C:\7zsetup.exe -Force
     
