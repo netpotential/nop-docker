@@ -1,4 +1,4 @@
-FROM netpotential/dotnet-framework-build:4.6.2
+FROM netpotential/msbuild:15.6
 
 MAINTAINER dealdiane@netpotential.co.nz
     
