@@ -12,7 +12,8 @@ RUN $env:PATH = 'c:\7zip;' + $env:PATH; \
 ENV NOP_VERSION 3.80
 
 # Download nopCommerce
-RUN Invoke-WebRequest "https://github.com/nopSolutions/nopCommerce/releases/download/release-${env:NOP_VERSION}/nopCommerce_${env:NOP_VERSION}_Source.rar" -UseBasicParsing -OutFile "C:/nop-src.rar"; \
+RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; \
+    Invoke-WebRequest "https://github.com/nopSolutions/nopCommerce/releases/download/release-${env:NOP_VERSION}/nopCommerce_${env:NOP_VERSION}_Source.rar" -UseBasicParsing -OutFile "C:/nop-src.rar"; \
     Start-Process C:\7zip\7z.exe -ArgumentList 'x C:/nop-src.rar -oC:/nop' -Wait; \
     Remove-Item "C:/nop-src.rar" -Force
 
