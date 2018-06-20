@@ -15,6 +15,9 @@ RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tl
     Remove-Item -Force -Recurse "C:\7zip";
 
 # Restore nuget packages
+RUN $Env:PATH = "$Env:ProgramFiles\NuGet\;$Env:PATH;" `
+    [Environment]::SetEnvironmentVariable('PATH', $Env:PATH, [EnvironmentVariableTarget]::Machine);
+
 RUN nuget restore "C:/nop" -SolutionDirectory "C:/nop"
 
 # Switch to cmd prompt instead of powershell because passing build options with spaces (e.g. Any Cpu) fails in powershell
