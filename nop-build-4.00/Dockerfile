@@ -43,7 +43,7 @@ SHELL ["cmd", "/c"]
 RUN msbuild /p:Configuration=Release /p:Platform="Any CPU" /p:Optimize=true /t:Restore,Build "C:/nop/nopCommerce.sln"
 
 # Install package managers
-RUN npm install -g gulp bower `
+RUN npm install -g gulp bower \
     choco install yarn -y
 
 CMD ["cmd"]
