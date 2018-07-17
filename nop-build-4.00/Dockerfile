@@ -42,6 +42,8 @@ RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tl
 SHELL ["cmd", "/c"]
 RUN msbuild /p:Configuration=Release /p:Platform="Any CPU" /p:Optimize=true /t:Restore,Build "C:/nop/nopCommerce.sln"
 
-SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+# Install package managers
+RUN npm install -g gulp bower `
+    choco install yarn -y
 
 CMD ["cmd"]
