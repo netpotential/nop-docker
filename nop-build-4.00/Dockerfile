@@ -44,10 +44,4 @@ RUN msbuild /p:Configuration=Release /p:Platform="Any CPU" /p:Optimize=true /t:R
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
-# Workaround for broken node.js https://github.com/nodejs/node/issues/8897
-# Projects that require node must be ran from D:\\
-VOLUME C:/code
-RUN Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\DOS Devices' -Name 'D:' -Value '\??\C:\code' -Type String
-WORKDIR 'D:\\'
-
 CMD ["cmd"]
