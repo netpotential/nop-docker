@@ -34,10 +34,10 @@ RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tl
     Invoke-WebRequest "https://github.com/nopSolutions/nopCommerce/releases/download/release-${env:NOP_VERSION}/nopCommerce_${env:NOP_VERSION}_Source.rar" -UseBasicParsing -OutFile "C:/nop-src.rar"; \
     Start-Process C:\7zip\7z.exe -ArgumentList 'x C:/nop-src.rar -oC:/nop-tmp' -Wait; \
     Move-Item -Force -Path "C:/nop-tmp/src" -Destination "C:/nop"; \
-    Remove-Item -Force "C:\nop-tmp"; \
-    Remove-Item -Force "C:\7zsetup.exe"; \
-    Remove-Item -Force "C:\nop-src.rar"; \
-    Remove-Item -Force -Recurse "C:\7zip";
+    Remove-Item "C:\nop-tmp" -Force -Recurse; \
+    Remove-Item "C:\7zsetup.exe" -Force; \
+    Remove-Item "C:\nop-src.rar" -Force; \
+    Remove-Item "C:\7zip" -Force -Recurse;
 
 # Build nopCommerce
 # Switch to cmd prompt instead of powershell because passing build options with spaces (e.g. Any Cpu) fails in powershell
