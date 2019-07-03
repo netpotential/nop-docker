@@ -42,7 +42,7 @@ RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tl
 # Build nopCommerce
 # Switch to cmd prompt instead of powershell because passing build options with spaces (e.g. Any Cpu) fails in powershell
 SHELL ["cmd", "/c"]
-RUN msbuild /p:Configuration=Release /p:Platform="Any CPU" /p:Optimize=true /t:Restore,Build "C:/nop/src/NopCommerce.sln"
+RUN msbuild /p:Configuration=Release /p:Platform="Any CPU" /p:Optimize=true /t:Restore,Build "C:/nop/NopCommerce.sln"
 
 # Install package managers
 RUN npm install -g gulp bower \
