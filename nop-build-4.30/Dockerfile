@@ -1,4 +1,4 @@
-FROM netpotential/msbuild:15.6
+FROM netpotential/msbuild:16.0
 
 MAINTAINER dealdiane@netpotential.co.nz
 
