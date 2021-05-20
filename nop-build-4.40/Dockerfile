@@ -33,7 +33,9 @@ RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tl
     Invoke-WebRequest -OutFile C:\7zsetup.exe https://www.7-zip.org/a/7z1801-x64.exe; \
     Start-Process C:\7zsetup.exe -ArgumentList '/S /D=c:\7zip\' -Wait; \
     Invoke-WebRequest "https://github.com/nopSolutions/nopCommerce/releases/download/release-${env:NOP_VERSION}/nopCommerce_${env:NOP_VERSION}_Source.zip" -UseBasicParsing -OutFile "C:/nop-src.zip"; \
-    Start-Process C:\7zip\7z.exe -ArgumentList 'x C:/nop-src.zip -oC:/nop' -Wait; \
+    Start-Process C:\7zip\7z.exe -ArgumentList 'x C:/nop-src.zip -oC:/nop-tmp' -Wait; \
+    Move-Item -Force -Path "C:/nop-tmp/src" -Destination "C:/nop"; \
+    Remove-Item "C:\nop-tmp" -Force -Recurse; \
     Remove-Item "C:\7zsetup.exe" -Force; \
     Remove-Item "C:\nop-src.zip" -Force; \
     Remove-Item "C:\7zip" -Force -Recurse;
