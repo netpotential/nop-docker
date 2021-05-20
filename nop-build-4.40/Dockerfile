@@ -9,7 +9,8 @@ ENV DOTNET_SDK_VERSION=5.0.103 \
 
 # Install .NET Core SDK
 # Uncomment below if .NET Core SDK is not installed or if you want to install a different version
-RUN Invoke-WebRequest "https://dotnetcli.blob.core.windows.net/dotnet/Sdk/${env:DOTNET_SDK_VERSION}/dotnet-sdk-${env:DOTNET_SDK_VERSION}-win-x64.zip" -OutFile dotnet.zip; \
+RUN [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; \
+    Invoke-WebRequest "https://dotnetcli.blob.core.windows.net/dotnet/Sdk/${env:DOTNET_SDK_VERSION}/dotnet-sdk-${env:DOTNET_SDK_VERSION}-win-x64.zip" -OutFile dotnet.zip; \
     Expand-Archive dotnet.zip -DestinationPath "$Env:ProgramFiles\dotnet" -Force; \
     Remove-Item -Force dotnet.zip;
 
