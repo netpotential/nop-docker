@@ -90,6 +90,7 @@ RUN powershell -Command "\
 
 # Install package managers
 RUN npm install -g gulp bower \
+    npm install -g windows-build-tools \
     choco install yarn -y
 
 CMD ["cmd"]
