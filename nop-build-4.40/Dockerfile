@@ -85,12 +85,19 @@ RUN powershell -Command "Invoke-WebRequest https://nodejs.org/dist/v${env:NODE_V
 ENV chocolateyUseWindowsCompression false
 
 RUN powershell -Command "\
-	Invoke-Expression ((New-Object Net.Webclient).DownloadString('https://chocolatey.org/install.ps1')); \
+    Invoke-Expression ((New-Object Net.Webclient).DownloadString('https://chocolatey.org/install.ps1')); \
     &choco feature disable --name showDownloadProgress"
 
+
+USER ContainerAdministrator
+# Install node-sass build tools 
+# https://github.com/nodejs/node-gyp#on-windows
+RUN choco install python visualcpp-build-tools -y \
+    && npm config set msvs_version 2017
+
 # Install package managers
-RUN npm install -g gulp bower \
-    npm install -g windows-build-tools \
-    choco install yarn -y
+RUN npm install --global gulp bower \
+    && choco install yarn -y
+USER ContainerUser
 
 CMD ["cmd"]
