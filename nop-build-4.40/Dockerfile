@@ -1,21 +1,55 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0-windowsservercore-ltsc2019
+FROM mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-ltsc2019
 
 MAINTAINER dealdiane@netpotential.co.nz
 
+# Install node
+ENV NODE_VERSION=14.17.0 \
+    NODE_DOWNLOAD_SHA=6582A7259C433E9F667DCC4ED3E5D68BC514CABA2EED40E4626C8B4C7E5ECD5C
+
+# From: https://github.com/aspnet/aspnet-docker/blob/master/1.1/nanoserver/sdk/Dockerfile
+RUN Invoke-WebRequest https://nodejs.org/dist/v${env:NODE_VERSION}/node-v${env:NODE_VERSION}-win-x64.zip -outfile node.zip; \
+    if ((Get-FileHash node.zip -Algorithm sha256).Hash -ne $env:NODE_DOWNLOAD_SHA) { \
+        Write-Host 'NODEJS CHECKSUM VERIFICATION FAILED!'; \
+        exit 1; \
+    }; \
+    Expand-Archive node.zip -DestinationPath "C:/nodejs-tmp/"; \
+    Move-Item "C:/nodejs-tmp/node-v${env:NODE_VERSION}-win-x64" -Destination "C:\nodejs"; \
+    Remove-Item -Force "C:/nodejs-tmp/"; \
+    Remove-Item -Force node.zip; \
+    $env:PATH = 'C:\nodejs\;' + $env:PATH; \
+    [Environment]::SetEnvironmentVariable('PATH', $env:PATH, [EnvironmentVariableTarget]::Machine);"
+
+# Install chocolatey
+ENV chocolateyUseWindowsCompression false
+
+RUN [System.Net.ServicePointManager]::SecurityProtocol = 3072; \
+    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')); \
+    &choco feature disable --name showDownloadProgress"
+
+# Install node build tools
+# Normally should be npm install --global --production windows-build-tools but currently hangs and doesn't finish
+ADD https://aka.ms/vs/15/release/vs_buildtools.exe C:\\vs15_buildtools.exe
+
+RUN C:\\vs15_buildtools.exe --wait --quiet --norestart --nocache --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended \
+    Remove-Item -Force C:\vs15_buildtools.exe
+
+# Install package managers
+RUN npm install --global gulp bower \
+    choco install yarn -y
+
+# Compile sass
+RUN npm rebuild node-sass
+
+# Setup nopCommerce
 ENV NOP_VERSION=4.40.3
 
 # Download nopCommerce
-RUN powershell -Command "\
-	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; \
-    Invoke-WebRequest -OutFile C:\7zsetup.exe https://www.7-zip.org/a/7z1801-x64.exe; \
-    Start-Process C:\7zsetup.exe -ArgumentList '/S /D=c:\7zip\' -Wait; \
-    Invoke-WebRequest "https://github.com/nopSolutions/nopCommerce/releases/download/release-${env:NOP_VERSION}/nopCommerce_${env:NOP_VERSION}_Source.zip" -UseBasicParsing -OutFile "C:/nop-src.zip"; \
-    Start-Process C:\7zip\7z.exe -ArgumentList 'x C:/nop-src.zip -oC:/nop-tmp' -Wait; \
-    Move-Item -Force -Path "C:/nop-tmp/src" -Destination "C:/nop"; \
-    Remove-Item "C:\nop-tmp" -Force -Recurse; \
-    Remove-Item "C:\7zsetup.exe" -Force; \
-    Remove-Item "C:\nop-src.zip" -Force; \
-    Remove-Item "C:\7zip" -Force -Recurse;"
+RUN Invoke-WebRequest "https://github.com/nopSolutions/nopCommerce/releases/download/release-${env:NOP_VERSION}/nopCommerce_${env:NOP_VERSION}_Source.zip" -UseBasicParsing -OutFile 'C:/nop-src.zip';"
+ 
+RUN Expand-Archive -LiteralPath 'C:\nop-src.zip' -DestinationPath c:\nop-tmp; \
+    Move-Item -Force -Path 'C:/nop-tmp/src' -Destination 'C:/nop'; \
+    Remove-Item 'C:\nop-tmp' -Force -Recurse; \
+    Remove-Item 'C:\nop-src.zip' -Force;
 
 # Based from https://github.com/nopSolutions/nopCommerce/blob/develop/Dockerfile
 # Restore solution
@@ -64,40 +98,6 @@ RUN dotnet build Nop.Plugin.Widgets.GoogleAnalytics.csproj -c Release
 WORKDIR /nop/Plugins/Nop.Plugin.Widgets.NivoSlider
 RUN dotnet build Nop.Plugin.Widgets.NivoSlider.csproj -c Release
 
-# Install node
-ENV NODE_VERSION=15.10.0 \
-    NODE_DOWNLOAD_SHA=2BF72DA4E5DDC485599F2ECA54AB7C59001D70BAEC7FF2BB050D9F4ED1B066A6
-
-# From: https://github.com/aspnet/aspnet-docker/blob/master/1.1/nanoserver/sdk/Dockerfile
-RUN powershell -Command "Invoke-WebRequest https://nodejs.org/dist/v${env:NODE_VERSION}/node-v${env:NODE_VERSION}-win-x64.zip -outfile node.zip; \
-    if ((Get-FileHash node.zip -Algorithm sha256).Hash -ne $env:NODE_DOWNLOAD_SHA) { \
-        Write-Host 'NODEJS CHECKSUM VERIFICATION FAILED!'; \
-        exit 1; \
-    }; \
-    Expand-Archive node.zip -DestinationPath "C:/nodejs-tmp/"; \
-    Move-Item "C:/nodejs-tmp/node-v${env:NODE_VERSION}-win-x64" -Destination "C:\nodejs"; \
-    Remove-Item -Force "C:/nodejs-tmp/"; \
-    Remove-Item -Force node.zip; \
-    $env:PATH = 'C:\nodejs\;' + $env:PATH; \
-    [Environment]::SetEnvironmentVariable('PATH', $env:PATH, [EnvironmentVariableTarget]::Machine);"
-
-# Install chocolatey    
-ENV chocolateyUseWindowsCompression false
-
-RUN powershell -Command "\
-    Invoke-Expression ((New-Object Net.Webclient).DownloadString('https://chocolatey.org/install.ps1')); \
-    &choco feature disable --name showDownloadProgress"
-
-
-USER ContainerAdministrator
-# Install node-sass build tools 
-# https://github.com/nodejs/node-gyp#on-windows
-RUN choco install python visualcpp-build-tools -y \
-    && npm config set msvs_version 2017
-
-# Install package managers
-RUN npm install --global gulp bower \
-    && choco install yarn -y
-USER ContainerUser
+WORKDIR /nop/
 
 CMD ["cmd"]
