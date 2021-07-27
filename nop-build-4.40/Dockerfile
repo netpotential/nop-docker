@@ -47,7 +47,9 @@ ENV NOP_VERSION=4.40.4
 RUN Invoke-WebRequest "https://github.com/nopSolutions/nopCommerce/releases/download/release-${env:NOP_VERSION}/nopCommerce_${env:NOP_VERSION}_Source.zip" -UseBasicParsing -OutFile 'C:/nop-src.zip';"
  
 RUN Expand-Archive -LiteralPath 'C:\nop-src.zip' -DestinationPath c:\nop-tmp; \
-    Move-Item -Force -Path 'C:/nop-tmp/src' -Destination 'C:/nop'; \
+    if (Test-Path -Path 'c:/nop-tmp/src') { \
+        Move-Item -Force -Path 'C:/nop-tmp/src' -Destination 'C:/nop'; \
+    } \
     Remove-Item 'C:\nop-tmp' -Force -Recurse; \
     Remove-Item 'C:\nop-src.zip' -Force;
 
