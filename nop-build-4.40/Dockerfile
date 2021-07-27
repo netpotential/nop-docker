@@ -77,8 +77,6 @@ WORKDIR /nop/Plugins/Nop.Plugin.Payments.CheckMoneyOrder
 RUN dotnet build Nop.Plugin.Payments.CheckMoneyOrder.csproj -c Release
 WORKDIR /nop/Plugins/Nop.Plugin.Payments.Manual
 RUN dotnet build Nop.Plugin.Payments.Manual.csproj -c Release
-WORKDIR /nop/Plugins/Nop.Plugin.Payments.PayPalSmartPaymentButtons
-RUN dotnet build Nop.Plugin.Payments.PayPalSmartPaymentButtons.csproj -c Release
 WORKDIR /nop/Plugins/Nop.Plugin.Payments.PayPalStandard
 RUN dotnet build Nop.Plugin.Payments.PayPalStandard.csproj -c Release
 WORKDIR /nop/Plugins/Nop.Plugin.Pickup.PickupInStore
