@@ -41,7 +41,7 @@ RUN npm install --global gulp bower \
 RUN npm rebuild node-sass
 
 # Setup nopCommerce
-ENV NOP_VERSION=4.40.3
+ENV NOP_VERSION=4.40.4
 
 # Download nopCommerce
 RUN Invoke-WebRequest "https://github.com/nopSolutions/nopCommerce/releases/download/release-${env:NOP_VERSION}/nopCommerce_${env:NOP_VERSION}_Source.zip" -UseBasicParsing -OutFile 'C:/nop-src.zip';"
