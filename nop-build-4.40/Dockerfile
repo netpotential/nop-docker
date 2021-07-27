@@ -49,6 +49,8 @@ RUN Invoke-WebRequest "https://github.com/nopSolutions/nopCommerce/releases/down
 RUN Expand-Archive -LiteralPath 'C:\nop-src.zip' -DestinationPath c:\nop-tmp; \
     if (Test-Path -Path 'c:/nop-tmp/src') { \
         Move-Item -Force -Path 'C:/nop-tmp/src' -Destination 'C:/nop'; \
+    } else { \
+        Move-Item -Force -Path 'C:/nop-tmp' -Destination 'C:/nop'; \
     } \
     Remove-Item 'C:\nop-tmp' -Force -Recurse; \
     Remove-Item 'C:\nop-src.zip' -Force;
