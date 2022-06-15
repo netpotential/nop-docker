@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/framework/runtime:4.8
+FROM mcr.microsoft.com/dotnet/sdk:6.0
 
 MAINTAINER dealdiane@netpotential.co.nz
 
@@ -6,6 +6,10 @@ MAINTAINER dealdiane@netpotential.co.nz
 ENV NODE_VERSION=14.17.0 \
     NODE_DOWNLOAD_SHA=6582A7259C433E9F667DCC4ED3E5D68BC514CABA2EED40E4626C8B4C7E5ECD5C \
     NOP_VERSION=4.50.2
+
+USER ContainerAdministrator
+
+SHELL ["pwsh", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'Continue'; $verbosePreference='Continue';"]
 
 # From: https://github.com/aspnet/aspnet-docker/blob/master/1.1/nanoserver/sdk/Dockerfile
 RUN Invoke-WebRequest https://nodejs.org/dist/v${env:NODE_VERSION}/node-v${env:NODE_VERSION}-win-x64.zip -outfile node.zip; \
@@ -20,13 +24,6 @@ RUN Invoke-WebRequest https://nodejs.org/dist/v${env:NODE_VERSION}/node-v${env:N
     $env:PATH = 'C:\nodejs\;' + $env:PATH; \
     [Environment]::SetEnvironmentVariable('PATH', $env:PATH, [EnvironmentVariableTarget]::Machine);"
 
-# Install chocolatey
-ENV chocolateyUseWindowsCompression false
-
-RUN [System.Net.ServicePointManager]::SecurityProtocol = 3072; \
-    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1')); \
-    &choco feature disable --name showDownloadProgress"
-
 # Install node build tools
 # Normally should be npm install --global --production windows-build-tools but currently hangs and doesn't finish
 ADD https://aka.ms/vs/15/release/vs_buildtools.exe C:\\vs15_buildtools.exe
@@ -36,7 +33,7 @@ RUN C:\\vs15_buildtools.exe --wait --quiet --norestart --nocache --add Microsoft
 
 # Install package managers
 RUN npm install --global gulp bower \
-    choco install yarn -y
+    npm install --global yarn
 
 # Compile sass
 RUN npm rebuild node-sass
